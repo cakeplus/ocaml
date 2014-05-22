@@ -43,6 +43,11 @@ void caml_init_stack (uintnat initial_max_size)
                    caml_max_stack_size / 1024 * sizeof (value));
 }
 
+void caml_free_stack (void)
+{
+  caml_stat_free(caml_stack_low);
+}
+
 void caml_realloc_stack(asize_t required_space)
 {
   asize_t size;
