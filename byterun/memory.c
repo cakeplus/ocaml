@@ -162,6 +162,11 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
   return 0;
 }
 
+void caml_page_table_free(void)
+{
+  free(caml_page_table.entries);
+}
+
 #else
 
 /* 32-bit implementation:
@@ -190,6 +195,14 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
   }
   caml_page_table[i][j] = (caml_page_table[i][j] & ~toclear) | toset;
   return 0;
+}
+
+void caml_page_table_free(void)
+{
+  int i;
+  for (i = 0; i < Pagetable1_size; i++)
+    if (caml_page_table[i] != caml_page_table_empty)
+      free(caml_page_table[i])
 }
 
 #endif
