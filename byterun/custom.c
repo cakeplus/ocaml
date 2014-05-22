@@ -99,3 +99,23 @@ void caml_init_custom_operations(void)
   caml_register_custom_operations(&caml_nativeint_ops);
   caml_register_custom_operations(&caml_int64_ops);
 }
+
+void caml_free_custom_operations(void)
+{
+  struct custom_operations_list *this;
+
+  this = custom_ops_table;
+  while (this != NULL) {
+    struct custom_operations_list *next = this->next;
+    caml_stat_free(this);
+    this = next;
+  }
+
+  this = custom_ops_final_table;
+  while (this != NULL) {
+    struct custom_operations_list *next = this->next;
+    caml_stat_free(this->ops);
+    caml_stat_free(this);
+    this = next;
+  }
+}

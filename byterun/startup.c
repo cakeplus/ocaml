@@ -536,4 +536,5 @@ CAMLexport void caml_shutdown(void)
   caml_free_minor_heap();
   caml_page_table_free();
   caml_free_primitive_table();
+  caml_free_custom_operations();
 }
