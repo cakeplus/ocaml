@@ -323,3 +323,10 @@ void caml_realloc_ref_table (struct caml_ref_table *tbl)
     tbl->limit = tbl->end;
   }
 }
+
+void caml_free_minor_heap (void)
+{
+  free(caml_young_base);
+  caml_stat_free(caml_ref_table.base);
+  caml_stat_free(caml_weak_ref_table.base);
+}
