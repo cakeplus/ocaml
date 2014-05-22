@@ -550,3 +550,15 @@ void caml_init_major_heap (asize_t heap_size)
   caml_allocated_words = 0;
   caml_extra_heap_resources = 0.0;
 }
+
+void caml_free_major_heap (void)
+{
+  char *chunk = caml_heap_start;
+  while (chunk != NULL) {
+    char *next = Chunk_next(chunk);
+    caml_free_for_heap(chunk);
+    chunk = next;
+  };
+
+  free(gray_vals);
+}

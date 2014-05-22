@@ -527,3 +527,9 @@ CAMLexport void caml_startup_code(
     caml_fatal_uncaught_exception(caml_exn_bucket);
   }
 }
+
+
+CAMLexport void caml_shutdown(void)
+{
+  caml_free_major_heap();
+}
