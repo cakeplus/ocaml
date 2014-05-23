@@ -235,6 +235,19 @@ CAMLprim value caml_register_named_value(value vname, value val)
   return Val_unit;
 }
 
+void caml_free_named_values(void)
+{
+  int i;
+  for (i = 0; i < Named_value_size; i++) {
+    struct named_value *nv = named_value_table[i];
+    while (nv != NULL) {
+      struct named_value *next = nv->next;
+      caml_stat_free(nv);
+      nv = next;
+    }
+  }
+}
+
 CAMLexport value * caml_named_value(char const *name)
 {
   struct named_value * nv;

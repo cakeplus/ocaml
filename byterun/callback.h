@@ -42,6 +42,7 @@ CAMLextern value caml_callbackN_exn (value closure, int narg, value args[]);
 #define Extract_exception(v) ((v) & ~3)
 
 CAMLextern value * caml_named_value (char const * name);
+CAMLextern void caml_free_named_values (void);
 
 CAMLextern void caml_main (char ** argv);
 CAMLextern void caml_startup (char ** argv);
