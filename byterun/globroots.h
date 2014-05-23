@@ -20,6 +20,7 @@
 #include "roots.h"
 
 void caml_scan_global_roots(scanning_action f);
+void caml_free_global_roots(void);
 void caml_scan_global_young_roots(scanning_action f);
 
 #endif /* CAML_GLOBROOTS_H */

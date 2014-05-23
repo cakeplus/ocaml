@@ -52,6 +52,7 @@
 #include "sys.h"
 #include "startup.h"
 #include "version.h"
+#include "globroots.h"
 
 #ifndef O_BINARY
 #define O_BINARY 0
@@ -534,6 +535,7 @@ CAMLexport void caml_shutdown(void)
   caml_free_stack();
   caml_free_major_heap();
   caml_free_minor_heap();
+  caml_free_global_roots();
   caml_page_table_free();
   caml_free_primitive_table();
   caml_free_custom_operations();

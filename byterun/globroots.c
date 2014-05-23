@@ -264,6 +264,14 @@ void caml_scan_global_roots(scanning_action f)
   caml_iterate_global_roots(f, &caml_global_roots_old);
 }
 
+void caml_free_global_roots(void)
+{
+
+  caml_empty_global_roots(&caml_global_roots);
+  caml_empty_global_roots(&caml_global_roots_young);
+  caml_empty_global_roots(&caml_global_roots_old);
+}
+
 /* Scan global roots for a minor collection */
 
 void caml_scan_global_young_roots(scanning_action f)
