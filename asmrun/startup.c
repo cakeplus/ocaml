@@ -34,10 +34,12 @@
 #ifdef HAS_UI
 #include "ui.h"
 #endif
+#include "globroots.h"
 
 extern int caml_parser_trace;
 CAMLexport header_t caml_atom_table[256];
 char * caml_code_area_start, * caml_code_area_end;
+struct ext_table caml_code_fragments_table;
 
 /* Initialize the atom table and the static data and code area limits. */
 
@@ -196,4 +198,15 @@ void caml_main(char **argv)
 void caml_startup(char **argv)
 {
   caml_main(argv);
+}
+
+void caml_shutdown(void)
+{
+  caml_free_major_heap();
+  caml_free_minor_heap();
+  caml_free_global_roots();
+  caml_free_named_values();
+  caml_page_table_free();
+  caml_free_custom_operations();
+  caml_ext_table_free(&caml_code_fragments_table, 1 /* free_entries */);
 }
