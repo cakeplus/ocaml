@@ -209,4 +209,5 @@ void caml_shutdown(void)
   caml_page_table_free();
   caml_free_custom_operations();
   caml_ext_table_free(&caml_code_fragments_table, 1 /* free_entries */);
+  caml_free_frame_descriptors();
 }

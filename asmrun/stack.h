@@ -87,6 +87,7 @@ extern int caml_frame_descriptors_mask;
   (((uintnat)(addr) >> 3) & caml_frame_descriptors_mask)
 
 extern void caml_init_frame_descriptors(void);
+extern void caml_free_frame_descriptors(void);
 extern void caml_register_frametable(intnat *);
 extern void caml_register_dyn_global(void *);
 
