@@ -553,6 +553,16 @@ void caml_init_major_heap (asize_t heap_size)
 
 void caml_free_major_heap (void)
 {
+  // Finalizing everything
+  caml_empty_minor_heap ();
+  caml_finish_major_cycle ();
+  chunk = caml_heap_start;
+  caml_gc_sweep_hp = chunk;
+  limit = chunk + Chunk_size (chunk);
+  caml_gc_phase = Phase_sweep;
+  while (caml_gc_phase == Phase_sweep) sweep_slice (LONG_MAX);
+
+  // Freeing the major heap chunks
   char *chunk = caml_heap_start;
   while (chunk != NULL) {
     char *next = Chunk_next(chunk);
