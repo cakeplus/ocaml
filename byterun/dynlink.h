@@ -29,6 +29,9 @@ extern void caml_build_primitive_table(char * lib_path,
 /* Free the table previously built with caml_build_primitive_table */
 extern void caml_free_primitive_table(void);
 
+/* Unload all the previously loaded shared libraries */
+extern void caml_free_shared_libs(void);
+
 /* The search path for shared libraries */
 extern struct ext_table caml_shared_libs_path;
 

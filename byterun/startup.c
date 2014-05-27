@@ -532,6 +532,7 @@ CAMLexport void caml_startup_code(
 
 CAMLexport void caml_shutdown(void)
 {
+  caml_free_shared_libs();
   caml_free_major_heap();
   caml_free_stack();
   caml_free_minor_heap();
