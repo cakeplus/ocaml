@@ -78,6 +78,11 @@ void caml_load_code(int fd, asize_t len)
 #endif
 }
 
+void caml_free_code(void)
+{
+  caml_stat_free(caml_start_code);
+}
+
 /* This code is needed only if the processor is big endian */
 
 #ifdef ARCH_BIG_ENDIAN
