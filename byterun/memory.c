@@ -94,7 +94,8 @@ int caml_page_table_initialize(mlsize_t bytesize)
   }
   caml_page_table.mask = caml_page_table.size - 1;
   caml_page_table.occupancy = 0;
-  caml_page_table.entries = calloc(caml_page_table.size, sizeof(uintnat));
+  caml_page_table.entries =
+    caml_stat_calloc_noexc(caml_page_table.size, sizeof(uintnat));
   if (caml_page_table.entries == NULL)
     return -1;
   else
@@ -110,7 +111,7 @@ static int caml_page_table_resize(void)
   caml_gc_message (0x08, "Growing page table to %lu entries\n",
                    caml_page_table.size);
 
-  new_entries = calloc(2 * old.size, sizeof(uintnat));
+  new_entries = caml_stat_calloc_noexc(2 * old.size, sizeof(uintnat));
   if (new_entries == NULL) {
     caml_gc_message (0x08, "No room for growing page table\n", 0);
     return -1;
@@ -131,7 +132,7 @@ static int caml_page_table_resize(void)
     caml_page_table.entries[h] = e;
   }
 
-  free(old.entries);
+  caml_stat_free(old.entries);
   return 0;
 }
 
@@ -184,7 +185,7 @@ static int caml_page_table_modify(uintnat page, int toclear, int toset)
   uintnat j = Pagetable_index2(page);
 
   if (caml_page_table[i] == caml_page_table_empty) {
-    unsigned char * new_tbl = calloc(Pagetable2_size, 1);
+    unsigned char * new_tbl = caml_stat_calloc_noexc(Pagetable2_size, 1);
     if (new_tbl == 0) return -1;
     caml_page_table[i] = new_tbl;
   }
@@ -242,7 +243,7 @@ char *caml_alloc_for_heap (asize_t request)
 */
 void caml_free_for_heap (char *mem)
 {
-  free (Chunk_block (mem));
+  caml_stat_free (Chunk_block (mem));
 }
 
 /* Take a chunk of memory as argument, which must be the result of a
@@ -581,6 +582,16 @@ CAMLexport void * caml_stat_alloc (asize_t sz)
   return result;
 }
 
+CAMLexport void * caml_stat_alloc_noexc (asize_t sz)
+{
+  void * result = malloc (sz);
+
+#ifdef DEBUG
+  memset (result, Debug_uninit_stat, sz);
+#endif
+  return result;
+}
+
 CAMLexport void caml_stat_free (void * blk)
 {
   free (blk);
@@ -592,4 +603,14 @@ CAMLexport void * caml_stat_resize (void * blk, asize_t sz)
 
   if (result == NULL) caml_raise_out_of_memory ();
   return result;
+}
+
+CAMLexport void * caml_stat_resize_noexc (void * blk, asize_t sz)
+{
+  return realloc (blk, sz);
+}
+
+CAMLexport void * caml_stat_calloc_noexc (asize_t num, asize_t sz)
+{
+  return calloc (num, sz);
 }

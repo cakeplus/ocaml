@@ -38,7 +38,7 @@ CAMLexport int caml_compare_unordered;
 static void compare_free_stack(void)
 {
   if (compare_stack != compare_stack_init) {
-    free(compare_stack);
+    caml_stat_free(compare_stack);
     /* Reinitialize the globals for next time around */
     compare_stack = compare_stack_init;
     compare_stack_limit = compare_stack + COMPARE_STACK_INIT_SIZE;
@@ -62,13 +62,13 @@ static struct compare_item * compare_resize_stack(struct compare_item * sp)
 
   if (newsize >= COMPARE_STACK_MAX_SIZE) compare_stack_overflow();
   if (compare_stack == compare_stack_init) {
-    newstack = malloc(sizeof(struct compare_item) * newsize);
+    newstack = caml_stat_alloc_noexc(sizeof(struct compare_item) * newsize);
     if (newstack == NULL) compare_stack_overflow();
     memcpy(newstack, compare_stack_init,
            sizeof(struct compare_item) * COMPARE_STACK_INIT_SIZE);
   } else {
-    newstack =
-      realloc(compare_stack, sizeof(struct compare_item) * newsize);
+    newstack = caml_stat_resize_noexc(compare_stack,
+                                      sizeof(struct compare_item) * newsize);
     if (newstack == NULL) compare_stack_overflow();
   }
   compare_stack = newstack;

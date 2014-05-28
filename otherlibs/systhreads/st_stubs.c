@@ -292,7 +292,7 @@ static caml_thread_t caml_thread_new_info(void)
 {
   caml_thread_t th;
 
-  th = (caml_thread_t) malloc(sizeof(struct caml_thread_struct));
+  th = (caml_thread_t) caml_stat_alloc(sizeof(struct caml_thread_struct));
   if (th == NULL) return NULL;
   th->descr = Val_unit;         /* filled later */
 #ifdef NATIVE_CODE
@@ -351,7 +351,7 @@ static void caml_thread_remove_info(caml_thread_t th)
 #ifndef NATIVE_CODE
   stat_free(th->stack_low);
 #endif
-  if (th->backtrace_buffer != NULL) free(th->backtrace_buffer);
+  if (th->backtrace_buffer != NULL) caml_stat_free(th->backtrace_buffer);
   stat_free(th);
 }
 
@@ -620,7 +620,7 @@ CAMLprim value caml_thread_uncaught_exception(value exn)  /* ML */
   char * msg = format_caml_exception(exn);
   fprintf(stderr, "Thread %d killed on uncaught exception %s\n",
           Int_val(Ident(curr_thread->descr)), msg);
-  free(msg);
+  caml_stat_free(msg);
   if (caml_backtrace_active) print_exception_backtrace();
   fflush(stderr);
   return Val_unit;

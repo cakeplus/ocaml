@@ -754,7 +754,7 @@ value thread_kill(value thread)       /* ML */
   th->sp = NULL;
   th->trapsp = NULL;
   if (th->backtrace_buffer != NULL) {
-    free(th->backtrace_buffer);
+    caml_stat_free(th->backtrace_buffer);
     th->backtrace_buffer = NULL;
   }
   return retval;
@@ -767,7 +767,7 @@ value thread_uncaught_exception(value exn)  /* ML */
   char * msg = format_caml_exception(exn);
   fprintf(stderr, "Thread %d killed on uncaught exception %s\n",
           Int_val(curr_thread->ident), msg);
-  free(msg);
+  caml_stat_free(msg);
   if (backtrace_active) print_exception_backtrace();
   fflush(stderr);
   return Val_unit;

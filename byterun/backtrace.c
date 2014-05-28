@@ -104,7 +104,8 @@ void caml_stash_backtrace(value exn, code_t pc, value * sp, int reraise)
   }
   if (caml_backtrace_buffer == NULL) {
     Assert(caml_backtrace_pos == 0);
-    caml_backtrace_buffer = malloc(BACKTRACE_BUFFER_SIZE * sizeof(code_t));
+    caml_backtrace_buffer =
+      caml_stat_alloc_noexc(BACKTRACE_BUFFER_SIZE * sizeof(code_t));
     if (caml_backtrace_buffer == NULL) return;
   }
   if (caml_backtrace_pos >= BACKTRACE_BUFFER_SIZE) return;
@@ -271,7 +272,8 @@ static void read_debug_info(void)
   }
   caml_close_channel(chan);
 
-  events = (struct ev_info*)malloc(n_events * sizeof(struct ev_info));
+  events = (struct ev_info*)caml_stat_alloc_noexc(n_events *
+                                                  sizeof(struct ev_info));
   if(events == NULL) {
     read_debug_info_error = "out of memory";
     CAMLreturn0;
@@ -289,11 +291,11 @@ static void read_debug_info(void)
       ev_start = Field (Field (ev, EV_LOC), LOC_START);
 
       fnsz = caml_string_length(Field (ev_start, POS_FNAME))+1;
-      events[j].ev_filename = (char*)malloc(fnsz);
+      events[j].ev_filename = (char*)caml_stat_alloc_noexc(fnsz);
       if(events[j].ev_filename == NULL) {
         for(j--; j >= 0; j--)
-          free(events[j].ev_filename);
-        free(events);
+          caml_stat_free(events[j].ev_filename);
+        caml_stat_free(events);
         events = NULL;
         read_debug_info_error = "out of memory";
         CAMLreturn0;

@@ -103,7 +103,7 @@ CAMLexport char * caml_search_exe_in_path(char * name)
       caml_stat_free(fullname);
       return caml_strdup(name);
     }
-    if (retcode < fullnamelen) 
+    if (retcode < fullnamelen)
       return fullname;
     caml_stat_free(fullname);
     fullnamelen = retcode + 1;
@@ -213,7 +213,7 @@ static void store_argument(char * arg)
 {
   if (argc + 1 >= argvsize) {
     argvsize *= 2;
-    argv = (char **) realloc(argv, argvsize * sizeof(char *));
+    argv = (char **) caml_stat_resize_noexc(argv, argvsize * sizeof(char *));
     if (argv == NULL) out_of_memory();
   }
   argv[argc++] = arg;
@@ -263,7 +263,7 @@ CAMLexport void caml_expand_command_line(int * argcp, char *** argvp)
   int i;
   argc = 0;
   argvsize = 16;
-  argv = (char **) malloc(argvsize * sizeof(char *));
+  argv = (char **) caml_stat_alloc_noexc(argvsize * sizeof(char *));
   if (argv == NULL) out_of_memory();
   for (i = 0; i < *argcp; i++) expand_argument((*argvp)[i]);
   argv[argc] = NULL;

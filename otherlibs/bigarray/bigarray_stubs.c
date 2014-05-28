@@ -155,7 +155,7 @@ caml_ba_alloc(int flags, int num_dims, void * data, intnat * dim)
                           caml_ba_element_size[flags & CAML_BA_KIND_MASK],
                           &overflow);
     if (overflow) caml_raise_out_of_memory();
-    data = malloc(size);
+    data = caml_stat_alloc(size);
     if (data == NULL && size != 0) caml_raise_out_of_memory();
     flags |= CAML_BA_MANAGED;
   }
@@ -670,10 +670,10 @@ static void caml_ba_finalize(value v)
     break;
   case CAML_BA_MANAGED:
     if (b->proxy == NULL) {
-      free(b->data);
+      caml_stat_free(b->data);
     } else {
       if (-- b->proxy->refcount == 0) {
-        free(b->proxy->data);
+        caml_stat_free(b->proxy->data);
         caml_stat_free(b->proxy);
       }
     }
@@ -975,7 +975,7 @@ uintnat caml_ba_deserialize(void * dst)
     caml_deserialize_error("input_value: bad bigarray kind");
   elt_size = caml_ba_element_size[b->flags & CAML_BA_KIND_MASK];
   /* Allocate room for data */
-  b->data = malloc(elt_size * num_elts);
+  b->data = caml_stat_alloc(elt_size * num_elts);
   if (b->data == NULL)
     caml_deserialize_error("input_value: out of memory for bigarray");
   /* Read data */

@@ -89,7 +89,7 @@ void caml_set_minor_heap_size (asize_t size)
 
   if (caml_young_start != NULL){
     caml_page_table_remove(In_young, caml_young_start, caml_young_end);
-    free (caml_young_base);
+    caml_stat_free (caml_young_base);
   }
   caml_young_base = new_heap_base;
   caml_young_start = new_heap;
@@ -313,7 +313,7 @@ void caml_realloc_ref_table (struct caml_ref_table *tbl)
     caml_gc_message (0x08, "Growing ref_table to %"
                            ARCH_INTNAT_PRINTF_FORMAT "dk bytes\n",
                      (intnat) sz/1024);
-    tbl->base = (value **) realloc ((char *) tbl->base, sz);
+    tbl->base = (value **) caml_stat_resize_noexc ((char *) tbl->base, sz);
     if (tbl->base == NULL){
       caml_fatal_error ("Fatal error: ref_table overflow\n");
     }
