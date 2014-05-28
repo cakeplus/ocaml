@@ -35,6 +35,7 @@
 #include "ui.h"
 #endif
 #include "globroots.h"
+#include "finalise.h"
 
 extern int caml_parser_trace;
 CAMLexport header_t caml_atom_table[256];
@@ -210,4 +211,5 @@ void caml_shutdown(void)
   caml_free_custom_operations();
   caml_ext_table_free(&caml_code_fragments_table, 1 /* free_entries */);
   caml_free_frame_descriptors();
+  caml_final_free();
 }

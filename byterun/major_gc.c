@@ -553,9 +553,12 @@ void caml_init_major_heap (asize_t heap_size)
 
 void caml_free_major_heap (void)
 {
-  // Finalizing everything
+  // Finishing major cycle
   caml_empty_minor_heap ();
   caml_finish_major_cycle ();
+  caml_final_do_calls ();
+
+  // Finalizing everything
   chunk = caml_heap_start;
   caml_gc_sweep_hp = chunk;
   limit = chunk + Chunk_size (chunk);

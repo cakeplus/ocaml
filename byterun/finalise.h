@@ -23,5 +23,6 @@ void caml_final_do_weak_roots (scanning_action f);
 void caml_final_do_young_roots (scanning_action f);
 void caml_final_empty_young (void);
 value caml_final_register (value f, value v);
+void caml_final_free (void);
 
 #endif /* CAML_FINALISE_H */
