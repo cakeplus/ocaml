@@ -551,3 +551,17 @@ void caml_init_major_heap (asize_t heap_size)
   caml_allocated_words = 0;
   caml_extra_heap_resources = 0.0;
 }
+
+void caml_finalise_heap (void)
+{
+  // Finishing major cycle (all values become white)
+  caml_empty_minor_heap ();
+  caml_finish_major_cycle ();
+
+  // Finalising all values (by forced sweeping)
+  caml_gc_phase = Phase_sweep;
+  chunk = caml_heap_start;
+  caml_gc_sweep_hp = chunk;
+  limit = chunk + Chunk_size (chunk);
+  while (caml_gc_phase == Phase_sweep) sweep_slice (LONG_MAX);
+}

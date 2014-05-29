@@ -201,5 +201,6 @@ void caml_startup(char **argv)
 
 CAMLexport void caml_shutdown(void)
 {
+  caml_finalize_heap();
   caml_stat_destroy_pool();
 }
