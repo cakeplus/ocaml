@@ -40,16 +40,28 @@ CAMLextern void caml_free_dependent_memory (mlsize_t);
 CAMLextern void caml_modify (value *, value);
 CAMLextern void caml_initialize (value *, value);
 CAMLextern value caml_check_urgent_gc (value);
-CAMLextern void * caml_stat_alloc (asize_t);              /* Size in bytes. */
-CAMLextern void * caml_stat_alloc_noexc (asize_t);
-CAMLextern void caml_stat_free (void *);
-CAMLextern void * caml_stat_resize (void *, asize_t);     /* Size in bytes. */
-CAMLextern void * caml_stat_resize_noexc (void *, asize_t);
-CAMLextern void * caml_stat_calloc_noexc (asize_t, asize_t);/* Size in bytes. */
 char *caml_alloc_for_heap (asize_t request);   /* Size in bytes. */
 void caml_free_for_heap (char *mem);
 int caml_add_to_heap (char *mem);
 color_t caml_allocation_color (void *hp);
+
+/* Global memory pool.
+
+   The pool must be allocated with a call to caml_stat_create_pool
+   before it is possible to use any other caml_stat_* functions.
+
+   Notes:
+     asize_t = size in bytes.
+     "_noexc" suffix means that a function never throws an exception.
+*/
+CAMLextern void caml_stat_create_pool (void);
+CAMLextern void caml_stat_destroy_pool (void);
+CAMLextern void * caml_stat_alloc (asize_t);
+CAMLextern void * caml_stat_alloc_noexc (asize_t);
+CAMLextern void caml_stat_free (void *);
+CAMLextern void * caml_stat_resize (void *, asize_t);
+CAMLextern void * caml_stat_resize_noexc (void *, asize_t);
+CAMLextern void * caml_stat_calloc_noexc (asize_t, asize_t);
 
 /* void caml_shrink_heap (char *);        Only used in compact.c */
 

@@ -570,12 +570,37 @@ CAMLexport CAMLweakdef void caml_modify (value *fp, value val)
   }
 }
 
+
+/* Global memory pool
+   -------------------------------------------------------------------------- */
+
+#include "halloc.h"
+
+typedef int pool_t;
+
+pool_t *pool;
+
+
+CAMLexport void caml_stat_create_pool (void)
+{
+  if (pool == NULL)
+    pool = h_malloc (sizeof (pool_t));
+}
+
+CAMLexport void caml_stat_destroy_pool (void)
+{
+  h_free (pool);
+  pool = NULL;
+}
+
 CAMLexport void * caml_stat_alloc (asize_t sz)
 {
-  void * result = malloc (sz);
-
+  void *result = h_malloc (sz);
   /* malloc() may return NULL if size is 0 */
-  if (result == NULL && sz != 0) caml_raise_out_of_memory ();
+  if (result != NULL)
+    hattach (result, pool);
+  else
+    if (sz != 0) caml_raise_out_of_memory ();
 #ifdef DEBUG
   memset (result, Debug_uninit_stat, sz);
 #endif
@@ -584,33 +609,37 @@ CAMLexport void * caml_stat_alloc (asize_t sz)
 
 CAMLexport void * caml_stat_alloc_noexc (asize_t sz)
 {
-  void * result = malloc (sz);
-
+  void *result = h_malloc (sz);
+  /* malloc() may return NULL if size is 0 */
+  if (result != NULL)
+    hattach (result, pool);
 #ifdef DEBUG
   memset (result, Debug_uninit_stat, sz);
 #endif
   return result;
 }
 
-CAMLexport void caml_stat_free (void * blk)
+CAMLexport void caml_stat_free (void *blk)
 {
-  free (blk);
+  h_free (blk);
 }
 
-CAMLexport void * caml_stat_resize (void * blk, asize_t sz)
+CAMLexport void * caml_stat_resize (void *blk, asize_t sz)
 {
-  void * result = realloc (blk, sz);
-
+  void *result = h_realloc (blk, sz);
   if (result == NULL) caml_raise_out_of_memory ();
   return result;
 }
 
-CAMLexport void * caml_stat_resize_noexc (void * blk, asize_t sz)
+CAMLexport void * caml_stat_resize_noexc (void *blk, asize_t sz)
 {
-  return realloc (blk, sz);
+  return h_realloc (blk, sz);
 }
 
 CAMLexport void * caml_stat_calloc_noexc (asize_t num, asize_t sz)
 {
-  return calloc (num, sz);
+  void *result = h_calloc (num, sz);
+  if (result != NULL)
+    hattach (result, pool);
+  return result;
 }

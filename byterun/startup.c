@@ -352,6 +352,7 @@ CAMLexport void caml_main(char **argv)
   char * exe_name;
   static char proc_self_exe[256];
 
+  caml_stat_create_pool();
   /* Machine-dependent initialization of the floating-point hardware
      so that it behaves as much as possible as specified in IEEE */
   caml_init_ieee_floats();
@@ -463,6 +464,7 @@ CAMLexport void caml_startup_code(
   char * exe_name;
   static char proc_self_exe[256];
 
+  caml_stat_create_pool();
   caml_init_ieee_floats();
 #ifdef _MSC_VER
   caml_install_invalid_parameter_handler();

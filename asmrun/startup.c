@@ -162,6 +162,7 @@ void caml_main(char **argv)
   value res;
   char tos;
 
+  caml_stat_create_pool();
   caml_init_ieee_floats();
 #ifdef _MSC_VER
   caml_install_invalid_parameter_handler();
