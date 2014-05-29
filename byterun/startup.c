@@ -529,3 +529,9 @@ CAMLexport void caml_startup_code(
     caml_fatal_uncaught_exception(caml_exn_bucket);
   }
 }
+
+
+CAMLexport void caml_shutdown(void)
+{
+  caml_stat_destroy_pool();
+}

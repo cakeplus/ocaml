@@ -198,3 +198,8 @@ void caml_startup(char **argv)
 {
   caml_main(argv);
 }
+
+CAMLexport void caml_shutdown(void)
+{
+  caml_stat_destroy_pool();
+}
