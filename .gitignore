@@ -139,6 +139,7 @@
 /asmrun/signals.c
 /asmrun/debugger.c
 /asmrun/.depend.nt
+/asmrun/halloc.c
 
 # /boot/
 /boot/*.o
