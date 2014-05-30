@@ -24,4 +24,15 @@ void caml_final_do_young_roots (scanning_action f);
 void caml_final_empty_young (void);
 value caml_final_register (value f, value v);
 
+/* Forces finalisation of all values registered with caml_final_register,
+   disregarding both local and global roots. GC must be in Phase_idle state.
+
+   Value finalisation is performed in the reverse order to the
+   corresponding calls to Gc.finalise (caml_final_register)
+
+   Warning: if any of the finalisers themselves allocate finalisable objects,
+   these objects will not be freed as part of the procedure.
+*/
+void caml_final_do_all_calls (void);
+
 #endif /* CAML_FINALISE_H */

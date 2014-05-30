@@ -38,6 +38,7 @@ struct to_do {
   struct final item[1];  /* variable size */
 };
 
+/* finalising set */
 static struct to_do *to_do_hd = NULL;
 static struct to_do *to_do_tl = NULL;
 
@@ -144,6 +145,28 @@ void caml_final_do_calls (void)
     }
     caml_gc_message (0x80, "Done calling finalisation functions.\n", 0);
   }
+}
+
+void caml_final_do_all_calls (void)
+{
+  Assert (young == old);
+  if (old != 0){
+
+    // Moving all values from the finalisable set into the finalising set
+    alloc_to_do (old);
+    to_do_tl->size = old;
+    int i;
+    for (i = 0; i < old; i++){
+      Assert (Is_block (final_table[i].val));
+      Assert (Is_in_heap (final_table[i].val));
+      to_do_tl->item[i] = final_table[i];
+      caml_darken (to_do_tl->item[i].val, NULL);
+    }
+    old = young = 0;
+  }
+
+  // Triggering finalisation
+  caml_final_do_calls ();
 }
 
 /* Call a scanning_action [f] on [x]. */

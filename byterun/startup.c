@@ -35,6 +35,7 @@
 #include "printexc.h"
 #include "startup.h"
 #include "sys.h"
+#include "finalise.h"
 
 #ifdef NATIVE_CODE
 #  include "stack.h"
@@ -677,6 +678,11 @@ CAMLexport void caml_shutdown(void)
   startup_count--;
   if (startup_count > 0)
     return;
+
+  // Finalising values registered with Gc.finalise
+  caml_empty_minor_heap();
+  caml_finish_major_cycle();
+  caml_final_do_all_calls();
 
   caml_finalise_heap();
 #ifndef NATIVE_CODE
