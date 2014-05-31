@@ -192,7 +192,16 @@ void caml_build_primitive_table_builtin(void)
 }
 }
 
-#endif /* NATIVE_CODE */
+void caml_free_shared_libs(void)
+{
+  int i;
+  for (i = 0; i < shared_libs.size; i++) {
+    caml_dlclose(shared_libs.contents[i]);
+  }
+  shared_libs.size = 0;
+}
+
+#endif /* !NATIVE_CODE */
 
 /** dlopen interface for the bytecode linker **/
 
@@ -268,4 +277,4 @@ value caml_dynlink_get_current_libs(value unit)
   return Val_unit; /* not reached */
 }
 
-#endif /* NATIVE_CODE */
+#endif /* !NATIVE_CODE */

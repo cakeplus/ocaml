@@ -534,5 +534,6 @@ CAMLexport void caml_startup_code(
 CAMLexport void caml_shutdown(void)
 {
   caml_finalise_heap();
+  caml_free_shared_libs();
   caml_stat_destroy_pool();
 }
