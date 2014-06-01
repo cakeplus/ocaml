@@ -165,13 +165,15 @@ debugger.c: ../byterun/debugger.c
 	ln -s ../byterun/debugger.c debugger.c
 halloc.c: ../byterun/halloc.c
 	ln -s ../byterun/halloc.c halloc.c
+startup.c: ../byterun/startup.c
+	ln -s ../byterun/startup.c startup.c
 
 
 LINKEDFILES=misc.c freelist.c major_gc.c minor_gc.c memory.c alloc.c array.c \
   compare.c ints.c floats.c str.c io.c extern.c intern.c hash.c sys.c \
   parsing.c gc_ctrl.c terminfo.c md5.c obj.c lexing.c printexc.c callback.c \
   weak.c compact.c finalise.c meta.c custom.c main.c globroots.c \
-  $(UNIX_OR_WIN32).c dynlink.c signals.c debugger.c halloc.c
+  $(UNIX_OR_WIN32).c dynlink.c signals.c debugger.c halloc.c startup.c
 
 clean::
 	rm -f $(LINKEDFILES)
