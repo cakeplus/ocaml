@@ -89,6 +89,10 @@ static uintnat max_stack_init = Max_stack_def;
 CAMLexport header_t caml_atom_table[256];
 
 
+/* The number of outstanding calls to caml_startup */
+static int startup_count = 0;
+
+
 /* The option letter for each runtime option is the first letter of the
    last word of the ML name of the option (see [stdlib/gc.mli]).
    Except for l (maximum stack size) and h (initial heap size).
@@ -479,6 +483,12 @@ CAMLexport void caml_startup_code(
   char * exe_name;
   static char proc_self_exe[256];
 
+  // Second and subsequent calls are ignored,
+  // since the runtime has already started
+  startup_count++;
+  if (startup_count > 1)
+    return;
+
   caml_stat_create_pool();
   caml_init_ieee_floats();
 #ifdef _MSC_VER
@@ -644,6 +654,12 @@ void caml_main(char **argv)
 
 void caml_startup(char **argv)
 {
+  // Second and subsequent calls are ignored,
+  // since the runtime has already started
+  startup_count++;
+  if (startup_count > 1)
+    return;
+
   caml_main(argv);
 }
 
@@ -653,6 +669,15 @@ void caml_startup(char **argv)
 
 CAMLexport void caml_shutdown(void)
 {
+  if (startup_count <= 0)
+    caml_fatal_error("Fatal error: a call to caml_shutdown has no "
+                     "corresponding call to caml_startup");
+
+  // Do nothing unless it's the last call remaining
+  startup_count--;
+  if (startup_count > 0)
+    return;
+
   caml_finalise_heap();
 #ifndef NATIVE_CODE
   caml_free_shared_libs();
