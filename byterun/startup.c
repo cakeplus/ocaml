@@ -469,6 +469,7 @@ CAMLexport void caml_main(char **argv)
     }
     caml_fatal_uncaught_exception(caml_exn_bucket);
   }
+  caml_shutdown();
 }
 
 /* Main entry point when code is linked in as initialized data */
@@ -650,6 +651,7 @@ void caml_main(char **argv)
   res = caml_start_program();
   if (Is_exception_result(res))
     caml_fatal_uncaught_exception(Extract_exception(res));
+  caml_shutdown();
 }
 
 
